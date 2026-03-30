@@ -1,11 +1,12 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import authRouter from "./routes/auth.js";
+import initDB from "./db/init.js";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5001;
 
 // Middleware
 app.use(
@@ -15,6 +16,10 @@ app.use(
 );
 app.use(express.json());
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.use("/api/auth", authRouter);
+
+initDB().then(() => {
+  app.listen(process.env.PORT || 5001, () =>
+    console.log(`Server running on port ${process.env.PORT || 5001}`),
+  );
 });
