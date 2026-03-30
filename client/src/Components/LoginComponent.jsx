@@ -14,7 +14,9 @@ const Login = () => {
   const navigate = useNavigate();
 
   const validationSchema = Yup.object({
-    username: Yup.string().required("Username is required."),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required."),
     password: Yup.string()
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
@@ -22,7 +24,7 @@ const Login = () => {
 
   const formik = useFormik({
     initialValues: {
-      username: "",
+      email: "",
       password: "",
     },
     validationSchema,
@@ -35,7 +37,7 @@ const Login = () => {
   const loginUser = async (userData) => {
     try {
       const response = await axios.post(
-        "http://localhost:5002/api/auth/login",
+        "http://localhost:5001/api/auth/login",
         userData,
       );
 
@@ -86,19 +88,19 @@ const Login = () => {
         )}
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm="3">
-            Username
+            Email
           </Form.Label>
           <Col sm="9">
             <Form.Control
-              type="text"
-              placeholder="Username"
-              name="username"
+              type="email"
+              placeholder="Email"
+              name="email"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              isInvalid={formik.touched.username && formik.errors.username}
+              isInvalid={formik.touched.email && formik.errors.email}
             />
             <Form.Control.Feedback type="invalid">
-              {formik.errors.username}
+              {formik.errors.email}
             </Form.Control.Feedback>
           </Col>
         </Form.Group>
