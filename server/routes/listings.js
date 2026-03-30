@@ -1,6 +1,7 @@
 import express from "express";
 import Property from "../models/Property.js";
 import Agent from "../models/Agent.js";
+import { Op } from "sequelize";
 
 const router = express.Router();
 
@@ -13,22 +14,45 @@ router.get("/", async (req, res) => {
       beds,
       baths,
       type,
+      keyword,
       page = 1,
       limit = 10,
     } = req.query;
 
     const where = {};
-    if (suburb) where.suburb = suburb;
-    if (type) where.type = type;
-    if (beds) where.beds = beds;
-    if (baths) where.baths = baths;
-    if (price_min || price_max) {
-      where.price = {};
-      if (price_min) where.price[Op.gte] = Number(price_min);
-      if (price_max) where.price[Op.lte] = Number(price_max);
+
+    // String filters
+    if (suburb) {
+      where.suburb = { [Op.iLike]: `%${suburb}%` };
     }
 
-    const offset = (page - 1) * limit;
+    if (type) {
+      where.type = { [Op.iLike]: `%${type}%` };
+    }
+
+    if (beds && !isNaN(beds)) {
+      where.beds = { [Op.gte]: Number(beds) };
+    }
+    if (baths && !isNaN(baths)) {
+      where.baths = { [Op.gte]: Number(baths) };
+    }
+
+    if ((price_min && !isNaN(price_min)) || (price_max && !isNaN(price_max))) {
+      where.price = {};
+      if (price_min && !isNaN(price_min))
+        where.price[Op.gte] = Number(price_min);
+      if (price_max && !isNaN(price_max))
+        where.price[Op.lte] = Number(price_max);
+    }
+
+    if (keyword) {
+      where[Op.or] = [
+        { title: { [Op.iLike]: `%${keyword}%` } },
+        { description: { [Op.iLike]: `%${keyword}%` } },
+      ];
+    }
+
+    const offset = (Number(page) - 1) * Number(limit);
 
     const { count, rows } = await Property.findAndCountAll({
       where,
@@ -45,7 +69,8 @@ router.get("/", async (req, res) => {
       properties: rows,
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Error fetching properties:", err);
+    res.status(500).json({ error: "Failed to fetch properties" });
   }
 });
 
