@@ -2,6 +2,7 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import { authMiddleware } from "../middlewares/auth.js";
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -44,6 +45,20 @@ router.post("/login", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get("/check-admin", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.userId, {
+      attributes: ["id", "name", "email", "isAdmin"],
+    });
+
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    res.json({ isAdmin: user.isAdmin });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

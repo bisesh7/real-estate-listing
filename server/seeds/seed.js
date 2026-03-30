@@ -6,13 +6,11 @@ import bcrypt from "bcrypt";
 
 const seed = async () => {
   try {
-    // Drop & recreate tables
     await sequelize.sync({ force: true });
     console.log("Database synced");
 
     // -------- Users --------
     const hashedPassword = await bcrypt.hash("password123", 10);
-
     const users = await User.bulkCreate([
       {
         name: "Admin User",
@@ -27,7 +25,6 @@ const seed = async () => {
         isAdmin: false,
       },
     ]);
-
     console.log("Users seeded");
 
     // -------- Agents --------
@@ -35,7 +32,6 @@ const seed = async () => {
       { name: "John Doe", email: "john.doe@gmail.com" },
       { name: "Jane Doe", email: "jane.doe@gmail.com" },
     ]);
-
     console.log("Agents seeded");
 
     // -------- Properties --------
@@ -60,7 +56,7 @@ const seed = async () => {
         suburb: "Baneshwor",
         type: "House",
         agentId: agents[1].id,
-        internalNotes: "Spacious backyard",
+        internalNotes: "Spacious backyard, great for kids",
       },
       {
         title: "Luxury Apartment in Thamel",
@@ -71,7 +67,7 @@ const seed = async () => {
         suburb: "Thamel",
         type: "Apartment",
         agentId: agents[0].id,
-        internalNotes: "Great for Airbnb",
+        internalNotes: "Ideal for Airbnb rentals",
       },
       {
         title: "Family House in Maharajgunj",
@@ -85,130 +81,129 @@ const seed = async () => {
         internalNotes: "Needs minor renovation",
       },
       {
-        title: "Budget Apartment in Koteshwor",
-        description: "Affordable apartment near ring road.",
-        price: 8000000,
-        beds: 2,
-        baths: 1,
-        suburb: "Koteshwor",
-        type: "Apartment",
-        agentId: agents[0].id,
-        internalNotes: "Good for first-time buyers",
-      },
-      {
-        title: "Spacious House in Bhaktapur",
-        description: "Traditional style house with modern interior.",
-        price: 20000000,
+        title: "Penthouse in Lazimpat",
+        description: "Spacious penthouse with city view.",
+        price: 45000000,
         beds: 4,
         baths: 3,
-        suburb: "Bhaktapur",
-        type: "House",
-        agentId: agents[1].id,
-        internalNotes: "Tourist attraction nearby",
-      },
-      {
-        title: "Studio Apartment in Patan",
-        description: "Compact living space in Lalitpur.",
-        price: 6000000,
-        beds: 1,
-        baths: 1,
-        suburb: "Patan",
+        suburb: "Lazimpat",
         type: "Apartment",
         agentId: agents[0].id,
-        internalNotes: "Ideal for students",
+        internalNotes: "Luxury apartment, rooftop access",
       },
       {
-        title: "Luxury Villa in Budhanilkantha",
-        description: "Premium villa with mountain views.",
-        price: 50000000,
+        title: "Modern Villa in Jhamsikhel",
+        description: "Quiet villa, private garden.",
+        price: 60000000,
         beds: 6,
         baths: 5,
-        suburb: "Budhanilkantha",
+        suburb: "Jhamsikhel",
         type: "House",
         agentId: agents[1].id,
-        internalNotes: "High-end clients only",
+        internalNotes: "Recently renovated, premium finishes",
       },
       {
-        title: "Apartment in Kalanki",
-        description: "Convenient location with easy transport access.",
-        price: 9000000,
-        beds: 2,
-        baths: 2,
-        suburb: "Kalanki",
-        type: "Apartment",
+        title: "Compact Studio in Thamel",
+        description: "Small, convenient for singles or students.",
+        price: 7000000,
+        beds: 1,
+        baths: 1,
+        suburb: "Thamel",
+        type: "Studio",
         agentId: agents[0].id,
-        internalNotes: "Near bus park",
+        internalNotes: "High turnover, good for short-term rental",
       },
       {
-        title: "House in Kirtipur",
-        description: "Peaceful environment with scenic views.",
-        price: 18000000,
+        title: "Eco-friendly Home in Patan",
+        description: "Sustainable design, solar panels installed.",
+        price: 32000000,
+        beds: 3,
+        baths: 3,
+        suburb: "Patan",
+        type: "House",
+        agentId: agents[1].id,
+        internalNotes: "Energy efficient, low maintenance",
+      },
+      {
+        title: "Duplex Apartment in Baneshwor",
+        description: "Two floors, modern amenities.",
+        price: 28000000,
         beds: 3,
         baths: 2,
-        suburb: "Kirtipur",
-        type: "House",
-        agentId: agents[1].id,
-        internalNotes: "Growing area",
-      },
-      {
-        title: "Apartment in Dillibazar",
-        description: "Central location close to offices.",
-        price: 13000000,
-        beds: 2,
-        baths: 2,
-        suburb: "Dillibazar",
+        suburb: "Baneshwor",
         type: "Apartment",
         agentId: agents[0].id,
-        internalNotes: "High rental demand",
+        internalNotes: "Recently painted, good natural light",
       },
       {
-        title: "House in Gongabu",
-        description: "Affordable house near new bus park.",
-        price: 14000000,
-        beds: 3,
-        baths: 2,
-        suburb: "Gongabu",
-        type: "House",
-        agentId: agents[1].id,
-        internalNotes: "Busy area",
-      },
-      {
-        title: "Penthouse in Boudha",
-        description: "Premium penthouse with monastery view.",
+        title: "Townhouse in Jawalakhel",
+        description: "Connected units, secure community.",
         price: 35000000,
         beds: 4,
         baths: 3,
-        suburb: "Boudha",
-        type: "Apartment",
-        agentId: agents[0].id,
-        internalNotes: "Luxury segment",
-      },
-      {
-        title: "House in Imadol",
-        description: "Quiet suburban house in Lalitpur.",
-        price: 16000000,
-        beds: 3,
-        baths: 2,
-        suburb: "Imadol",
+        suburb: "Jawalakhel",
         type: "House",
         agentId: agents[1].id,
-        internalNotes: "Family-friendly area",
+        internalNotes: "Quiet area, near park",
       },
       {
-        title: "Apartment in Teku",
-        description: "Near business district and hospitals.",
-        price: 11000000,
-        beds: 2,
-        baths: 2,
-        suburb: "Teku",
+        title: "Luxury Penthouse in Thamel",
+        description: "Top floor with city skyline view.",
+        price: 50000000,
+        beds: 5,
+        baths: 4,
+        suburb: "Thamel",
         type: "Apartment",
         agentId: agents[0].id,
-        internalNotes: "Good resale value",
+        internalNotes: "Exclusive listing, concierge service",
+      },
+      {
+        title: "Single-family Home in Lalitpur",
+        description: "Traditional style, big backyard.",
+        price: 30000000,
+        beds: 4,
+        baths: 3,
+        suburb: "Lalitpur",
+        type: "House",
+        agentId: agents[1].id,
+        internalNotes: "Good investment potential",
+      },
+      {
+        title: "Modern Loft in Lazimpat",
+        description: "Open floor plan, great lighting.",
+        price: 18000000,
+        beds: 2,
+        baths: 1,
+        suburb: "Lazimpat",
+        type: "Loft",
+        agentId: agents[0].id,
+        internalNotes: "Popular among young professionals",
+      },
+      {
+        title: "Spacious Villa in Maharajgunj",
+        description: "Large garden, private pool.",
+        price: 75000000,
+        beds: 6,
+        baths: 5,
+        suburb: "Maharajgunj",
+        type: "House",
+        agentId: agents[1].id,
+        internalNotes: "Luxury listing, high resale value",
+      },
+      {
+        title: "Cozy Apartment in Patan",
+        description: "Well-connected, quiet building.",
+        price: 15000000,
+        beds: 2,
+        baths: 2,
+        suburb: "Patan",
+        type: "Apartment",
+        agentId: agents[0].id,
+        internalNotes: "Good rental history",
       },
     ]);
 
     console.log("Properties seeded");
-
     console.log("Seeding finished!");
     process.exit(0);
   } catch (err) {

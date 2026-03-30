@@ -18,6 +18,9 @@ const AppLayout = ({ children }) => {
   );
 };
 
+const storedUser = localStorage.getItem("user");
+const user = storedUser ? JSON.parse(storedUser) : null;
+
 function App() {
   return (
     <div className="App">
@@ -25,7 +28,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/listings" element={<PropertyList />} />
+          <Route path="/listings" element={<PropertyList user={user} />} />
           <Route path="/listings/:id" element={<PropertyDetail />} />
         </Routes>
       </AppLayout>
