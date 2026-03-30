@@ -48,11 +48,9 @@ const Login = () => {
       setAlertVariant("success");
       setShowAlert(true);
 
-      if (["ADMIN", "ROLE_1"].includes(response.data.user.role)) {
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 2000);
-      }
+      setTimeout(() => {
+        navigate("/listings");
+      }, 2000);
 
       console.log("User logged in", userData);
     } catch (err) {
