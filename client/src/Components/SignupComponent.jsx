@@ -14,26 +14,24 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const validationSchema = Yup.object({
-    username: Yup.string().required("Username is required."),
-    firstName: Yup.string().required("First name is required."),
-    lastName: Yup.string().required("Last name is required."),
+    email: Yup.string()
+      .required("Email is required.")
+      .email("Invalid email format"),
+    name: Yup.string().required("First name is required."),
     password: Yup.string()
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password")], "Passwords need to match")
       .required("Confirm password is required"),
-    profilePicture: Yup.mixed().required("Profile picture is required"),
   });
 
   const formik = useFormik({
     initialValues: {
-      username: "",
+      email: "",
       password: "",
       confirmPassword: "",
-      profilePicture: null,
-      firstName: "",
-      lastName: "",
+      name: "",
     },
     validationSchema,
     onSubmit: (values) => {
@@ -44,25 +42,16 @@ const SignUp = () => {
 
   const createUser = async (userData) => {
     try {
-      const formData = new FormData();
-      formData.append("username", userData.username);
-      formData.append("firstName", userData.firstName);
-      formData.append("lastName", userData.lastName);
-      formData.append("password", userData.password);
-      formData.append("confirmPassword", userData.confirmPassword);
-      if (userData.profilePicture) {
-        formData.append("profilePicture", userData.profilePicture);
-      }
-
       const response = await axios.post(
-        "http://localhost:5002/api/users",
-        formData,
+        "http://localhost:5001/api/users",
+        userData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
           },
         },
       );
+
       setMessage("User created successfully!, Navigating to login...");
       setAlertVariant("success");
       setShowAlert(true);
@@ -104,79 +93,37 @@ const SignUp = () => {
         )}
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm="3">
-            First Name
+            Name
           </Form.Label>
           <Col sm="9">
             <Form.Control
               type="text"
-              placeholder="First Name"
-              name="firstName"
+              placeholder="Name"
+              name="name"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              isInvalid={formik.touched.firstName && formik.errors.firstName}
+              isInvalid={formik.touched.name && formik.errors.name}
             />
             <Form.Control.Feedback type="invalid">
-              {formik.errors.firstName}
+              {formik.errors.name}
             </Form.Control.Feedback>
           </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3">
           <Form.Label column sm="3">
-            Last Name
+            Email
           </Form.Label>
           <Col sm="9">
             <Form.Control
               type="text"
-              placeholder="Last Name"
-              name="lastName"
+              placeholder="Email"
+              name="email"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              isInvalid={formik.touched.lastName && formik.errors.lastName}
+              isInvalid={formik.touched.email && formik.errors.email}
             />
             <Form.Control.Feedback type="invalid">
-              {formik.errors.lastName}
-            </Form.Control.Feedback>
-          </Col>
-        </Form.Group>
-        <Form.Group as={Row} className="mb-3">
-          <Form.Label column sm="3">
-            Profile Picture
-          </Form.Label>
-          <Col sm="9">
-            <Form.Control
-              type="file"
-              placeholder="Profile Picture"
-              name="profilePicture"
-              accept="image/*"
-              onChange={(e) =>
-                formik.setFieldValue("profilePicture", e.currentTarget.files[0])
-              }
-              onBlur={formik.handleBlur}
-              isInvalid={
-                formik.touched.profilePicture && formik.errors.profilePicture
-              }
-            />
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.profilePicture}
-            </Form.Control.Feedback>
-          </Col>
-        </Form.Group>
-
-        <Form.Group as={Row} className="mb-3">
-          <Form.Label column sm="3">
-            Username
-          </Form.Label>
-          <Col sm="9">
-            <Form.Control
-              type="text"
-              placeholder="Username"
-              name="username"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              isInvalid={formik.touched.username && formik.errors.username}
-            />
-            <Form.Control.Feedback type="invalid">
-              {formik.errors.username}
+              {formik.errors.email}
             </Form.Control.Feedback>
           </Col>
         </Form.Group>
