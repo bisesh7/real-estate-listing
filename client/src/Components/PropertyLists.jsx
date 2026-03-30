@@ -1,9 +1,17 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Button,
+  Pagination,
+} from "react-bootstrap";
 
-export default function PropertyList() {
+export default function PropertyList({ user }) {
   const [properties, setProperties] = useState([]);
   const [filters, setFilters] = useState({
     suburb: "",
@@ -13,98 +21,81 @@ export default function PropertyList() {
     baths: "",
     type: "",
   });
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+  });
 
-  const fetchProperties = async () => {
+  // Fetch properties with current filters and page
+  const fetchProperties = async (page = 1, currentFilters = filters) => {
     try {
-      const query = new URLSearchParams(filters).toString();
+      const query = new URLSearchParams({
+        ...currentFilters,
+        page,
+        limit: pagination.limit,
+      }).toString();
       const res = await axios.get(
         `http://localhost:5001/api/listings?${query}`,
       );
-      setProperties(res.data);
+
+      setProperties(res.data.properties || []);
+      setPagination((prev) => ({
+        ...prev,
+        page: res.data.page || page,
+        total: res.data.total || 0,
+      }));
     } catch (err) {
-      console.error(err);
+      console.error("Failed to fetch properties:", err);
     }
   };
 
   useEffect(() => {
     fetchProperties();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleFilterChange = (e) => {
+  const handleFilterChange = (e) =>
     setFilters({ ...filters, [e.target.name]: e.target.value });
-  };
 
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchProperties();
+    fetchProperties(1, filters);
   };
+
+  const totalPages = Math.ceil(pagination.total / pagination.limit);
 
   return (
     <Container className="mt-4">
       <h1 className="mb-4">Property Listings</h1>
 
+      {/* Filters */}
       <Form className="mb-4" onSubmit={handleSearch}>
         <Row className="g-2">
-          <Col md>
-            <Form.Control
-              placeholder="Suburb"
-              name="suburb"
-              value={filters.suburb}
-              onChange={handleFilterChange}
-            />
-          </Col>
-          <Col md>
-            <Form.Control
-              type="number"
-              placeholder="Min Price"
-              name="price_min"
-              value={filters.price_min}
-              onChange={handleFilterChange}
-            />
-          </Col>
-          <Col md>
-            <Form.Control
-              type="number"
-              placeholder="Max Price"
-              name="price_max"
-              value={filters.price_max}
-              onChange={handleFilterChange}
-            />
-          </Col>
-          <Col md>
-            <Form.Control
-              type="number"
-              placeholder="Beds"
-              name="beds"
-              value={filters.beds}
-              onChange={handleFilterChange}
-            />
-          </Col>
-          <Col md>
-            <Form.Control
-              type="number"
-              placeholder="Baths"
-              name="baths"
-              value={filters.baths}
-              onChange={handleFilterChange}
-            />
-          </Col>
-          <Col md>
-            <Form.Control
-              placeholder="Type"
-              name="type"
-              value={filters.type}
-              onChange={handleFilterChange}
-            />
-          </Col>
+          {["suburb", "price_min", "price_max", "beds", "baths", "type"].map(
+            (f, i) => (
+              <Col md key={i}>
+                <Form.Control
+                  placeholder={f.replace("_", " ").toUpperCase()}
+                  name={f}
+                  type={
+                    f.includes("price") || f === "beds" || f === "baths"
+                      ? "number"
+                      : "text"
+                  }
+                  value={filters[f]}
+                  onChange={handleFilterChange}
+                />
+              </Col>
+            ),
+          )}
           <Col md="auto">
-            <Button type="submit" variant="primary">
-              Search
-            </Button>
+            <Button type="submit">Search</Button>
           </Col>
         </Row>
       </Form>
 
+      {/* Property Cards */}
       <Row xs={1} md={2} lg={3} className="g-4">
         {properties.length === 0 && <p>No properties found</p>}
         {properties.map((p) => (
@@ -116,10 +107,9 @@ export default function PropertyList() {
                   {p.suburb} | {p.type}
                 </Card.Subtitle>
                 <Card.Text>
-                  <strong>Price:</strong> Rs. {p.price}
+                  Price: Rs. {p.price}
                   <br />
-                  <strong>Beds:</strong> {p.beds} | <strong>Baths:</strong>{" "}
-                  {p.baths}
+                  Beds: {p.beds} | Baths: {p.baths}
                 </Card.Text>
                 <Link to={`/listings/${p.id}`} className="btn btn-primary">
                   View Details
@@ -129,6 +119,21 @@ export default function PropertyList() {
           </Col>
         ))}
       </Row>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <Pagination className="mt-4">
+          {[...Array(totalPages)].map((_, i) => (
+            <Pagination.Item
+              key={i}
+              active={i + 1 === pagination.page}
+              onClick={() => fetchProperties(i + 1, filters)}
+            >
+              {i + 1}
+            </Pagination.Item>
+          ))}
+        </Pagination>
+      )}
     </Container>
   );
 }

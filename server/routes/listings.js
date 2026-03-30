@@ -8,47 +8,44 @@ router.get("/", async (req, res) => {
   try {
     const {
       suburb,
-      type,
       price_min,
       price_max,
       beds,
       baths,
-      keyword,
+      type,
       page = 1,
+      limit = 10,
     } = req.query;
-    const limit = 10;
-    const offset = (page - 1) * limit;
 
     const where = {};
-
     if (suburb) where.suburb = suburb;
     if (type) where.type = type;
-    if (price_min) where.price = { ...where.price, $gte: Number(price_min) };
-    if (price_max) where.price = { ...where.price, $lte: Number(price_max) };
-    if (beds) where.beds = Number(beds);
-    if (baths) where.baths = Number(baths);
-    if (keyword) where.title = { $iLike: `%${keyword}%` };
+    if (beds) where.beds = beds;
+    if (baths) where.baths = baths;
+    if (price_min || price_max) {
+      where.price = {};
+      if (price_min) where.price[Op.gte] = Number(price_min);
+      if (price_max) where.price[Op.lte] = Number(price_max);
+    }
 
-    const properties = await Property.findAll({
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await Property.findAndCountAll({
       where,
       include: { model: Agent, attributes: ["id", "name", "email"] },
+      limit: Number(limit),
       offset,
-      limit,
       order: [["createdAt", "DESC"]],
     });
 
-    // Remove internalNotes for non-admins
-    const user = req.user;
-    const result = properties.map((p) => {
-      const prop = p.toJSON();
-      if (!user?.isAdmin) delete prop.internalNotes;
-      return prop;
+    res.json({
+      total: count,
+      page: Number(page),
+      limit: Number(limit),
+      properties: rows,
     });
-
-    res.json(result);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ error: err.message });
   }
 });
 
