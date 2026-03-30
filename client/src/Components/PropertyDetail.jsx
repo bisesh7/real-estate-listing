@@ -69,7 +69,7 @@ const PropertyDetail = () => {
       {property.internalNotes && (
         <>
           <hr />
-          <h5>Internal Notes</h5>
+          <h5>Internal Status Note</h5>
           <p>{property.internalNotes}</p>
         </>
       )}

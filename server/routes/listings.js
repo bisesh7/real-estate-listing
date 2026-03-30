@@ -2,6 +2,7 @@ import express from "express";
 import Property from "../models/Property.js";
 import Agent from "../models/Agent.js";
 import { Op } from "sequelize";
+import { authMiddleware } from "../middlewares/auth.js";
 
 const router = express.Router();
 
@@ -74,14 +75,18 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
+
+  console.log(req.user);
+
   try {
     const property = await Property.findByPk(id, { include: Agent });
     if (!property)
       return res.status(404).json({ message: "Property not found" });
 
     const prop = property.toJSON();
+
     if (!req.user?.isAdmin) delete prop.internalNotes;
 
     res.json(prop);
