@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 
-const Login = () => {
+export default () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertVariant, setAlertVariant] = useState("danger");
   const [message, setMessage] = useState("");
@@ -136,5 +136,3 @@ const Login = () => {
     </div>
   );
 };
-
-export default Login;

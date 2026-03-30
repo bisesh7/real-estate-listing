@@ -7,7 +7,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const SignUp = () => {
+export default () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertVariant, setAlertVariant] = useState("danger");
   const [message, setMessage] = useState("");
@@ -182,5 +182,3 @@ const SignUp = () => {
     </div>
   );
 };
-
-export default SignUp;
