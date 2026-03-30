@@ -44,5 +44,14 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^unist-util-visit-parents$": "<rootDir>/node_modules/react-router-dom",
+      "^unist-util-visit-parents/do-not-use-color$": "<rootDir>/node_modules/unist-util-visit-parents/lib/do-not-use-color"
+    },
+    "transform": {
+      "^.+\\\\.jsx?$": "babel-jest"
+    }
   }
 }

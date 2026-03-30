@@ -20,8 +20,12 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/listings", listingsRouter);
 
-initDB().then(() => {
-  app.listen(process.env.PORT || 5001, () =>
-    console.log(`Server running on port ${process.env.PORT || 5001}`),
-  );
-});
+if (process.env.NODE_ENV !== "test") {
+  initDB().then(() => {
+    app.listen(process.env.PORT || 5001, () =>
+      console.log(`Server running on port ${process.env.PORT || 5001}`),
+    );
+  });
+}
+
+export default app;
