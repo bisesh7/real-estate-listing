@@ -54,12 +54,12 @@ const Login = () => {
         }, 2000);
       }
 
-      console.log("User created", userData);
+      console.log("User logged in", userData);
     } catch (err) {
-      setMessage(err.response?.data?.error || "Error creating user");
+      setMessage(err.response?.data?.error || "Error logging in");
       setAlertVariant("danger");
       setShowAlert(true);
-      console.error("Error creating user", err.response?.data || err.message);
+      console.error("Error logging in", err.response?.data || err.message);
     }
   };
 
