@@ -42,15 +42,11 @@ export default () => {
 
   const createUser = async (userData) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5001/api/auth/register",
-        userData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+      const response = await axios.post("/api/auth/register", userData, {
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+      });
 
       setMessage("User created successfully!, Navigating to login...");
       setAlertVariant("success");

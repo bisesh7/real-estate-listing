@@ -36,9 +36,7 @@ export default function PropertyList({ user }) {
         page,
         limit: pagination.limit,
       }).toString();
-      const res = await axios.get(
-        `http://localhost:5001/api/listings?${query}`,
-      );
+      const res = await axios.get(`/api/listings?${query}`);
 
       setProperties(res.data.properties || []);
       setPagination((prev) => ({

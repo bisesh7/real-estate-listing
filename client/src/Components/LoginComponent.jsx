@@ -36,10 +36,7 @@ export default () => {
 
   const loginUser = async (userData) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5001/api/auth/login",
-        userData,
-      );
+      const response = await axios.post("/api/auth/login", userData);
 
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));

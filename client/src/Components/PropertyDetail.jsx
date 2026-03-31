@@ -12,14 +12,11 @@ const PropertyDetail = () => {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await axios.get(
-          `http://localhost:5001/api/listings/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const res = await axios.get(`/api/listings/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
 
         setProperty(res.data);
       } catch (err) {
